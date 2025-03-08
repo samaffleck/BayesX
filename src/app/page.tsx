@@ -21,7 +21,7 @@ export default function Home() {
 
       {/* Description */}
       <p className="text-lg text-center max-w-2xl mb-6">
-        BayesX helps engineers perform multi-variable, multi-objective optimization for time-intensive tasks.
+        BayesX helps engineers perform multi-variable optimization for time-intensive tasks.
       </p>
 
       {/* Image Container */}
