@@ -52,7 +52,7 @@ export default function Optimizer() {
     console.log("Payload being sent:", payload);
   
     try {
-      const response = await fetch("http://127.0.0.1:8000/process_experiments", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/process_experiments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { TableRow } from "@/components/ParamTable";
 
 interface ExperimentsTableProps {
@@ -7,7 +8,7 @@ interface ExperimentsTableProps {
   metric: string; // single metric name
   experiments: { id: number; values: Record<string, string> }[];
   onExperimentChange: (id: number, key: string, value: string) => void;  
-  onProcessExperiments: () => void; // Trigger Bayesian Optimization
+  onProcessExperiments: () => Promise<void>; // Make async to properly handle loading state
 }
 
 export default function ExperimentsTable({
@@ -17,14 +18,29 @@ export default function ExperimentsTable({
   onExperimentChange,
   onProcessExperiments,
 }: ExperimentsTableProps) {
+  const [loading, setLoading] = useState(false); // State to track API call status
+
+  // Function to handle API request with loading state
+  const handleProcessExperiments = async () => {
+    setLoading(true);
+    try {
+      await onProcessExperiments();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="overflow-x-auto">
       {/* Generate Next Experiment Button */}
       <button
-        onClick={onProcessExperiments}
-        className="mb-2 px-6 py-2 bg-gray-600 text-white text-sm rounded-lg shadow hover:bg-gray-700 transition"
+        onClick={handleProcessExperiments}
+        disabled={loading} // Disable button while computing
+        className={`mb-2 px-6 py-2 text-white text-sm rounded-lg shadow transition ${
+          loading ? "bg-gray-400 cursor-not-allowed" : "bg-gray-600 hover:bg-gray-700"
+        }`}
       >
-        Generate Next Experiment
+        {loading ? "Computing..." : "Generate Next Experiment"}
       </button>
 
       <table className="min-w-full border border-gray-300 divide-y divide-gray-300 text-sm">
@@ -79,9 +95,7 @@ export default function ExperimentsTable({
             </tr>
           ))}
         </tbody>
-
       </table>
-
     </div>
   );
 }
